@@ -116,7 +116,7 @@ const CurrencyTable = () => {
         populateData();
 
         // Set interval to run saveData function once a day
-        const intervalId = setInterval(saveData, interval);
+        const intervalId = setInterval(populateData, interval);
 
         // Clean up interval on component unmount
         return () => {
