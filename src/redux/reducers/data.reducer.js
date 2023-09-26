@@ -7,6 +7,11 @@ const initialState = {
         lastMonthData: null,
         sixMonthData: null,
         yearData: null,
+        previosWeekData: null
+    },
+    currency: {
+        currencyName: 'Dolar',
+        currencyID: 'USD',
     }
 }
 
@@ -62,7 +67,7 @@ const daysInMonth = (lastMonthData) => {
             prevDate = 1;
         if (tempDate - prevDate > 1) {
             let addDay = new Date(prev['$'].TIME_PERIOD);
-            while (new Date(addDay).getDate() + 1 < tempDate) {
+            while (new Date(addDay).getDate() + 1 < tempDate && daysInMonthArr.length < numDaysInMonth) {
 
                 addDay.setDate(addDay.getDate() + 1)
                 let temp = { ...prev['$'], ['TIME_PERIOD']: addDay }
@@ -76,6 +81,22 @@ const daysInMonth = (lastMonthData) => {
     }
     return { 'Obs': daysInMonthArr };
 }
+const daysInWeek = (lastWeekData) => {
+    let daysInWeekArr = []
+    for (let i = 0; i < lastWeekData.length; i++) {
+        daysInWeekArr.push(lastWeekData[i]);
+        if (new Date(lastWeekData[i]['$'].TIME_PERIOD).getDay() == 5) {
+            for (let j = 0; daysInWeekArr.length < 7 && lastWeekData.length + j < 7; j++) {
+                let tempObj = daysInWeekArr[daysInWeekArr.length - 1];
+                let tempDay = new Date(daysInWeekArr[daysInWeekArr.length - 1]['$'].TIME_PERIOD);
+                tempDay.setDate(tempDay.getDate() + 1)
+                let temp = { ...tempObj['$'], ['TIME_PERIOD']: tempDay }
+                daysInWeekArr.push({ '$': JSON.parse(JSON.stringify(temp)) })
+            }
+        }
+    }
+    return { 'Obs': daysInWeekArr };
+}
 
 
 
@@ -83,7 +104,6 @@ const data = {
     setData(state, action) {
         const { key, value } = action.payload;
         let datesArr = []
-        let daysInMonthArr = []
         switch (key) {
             case 'sixMonthData': {
                 datesArr = datesByMonth(value.Obs)
@@ -94,7 +114,12 @@ const data = {
                 break;
             }
             case 'lastMonthData': {
-                daysInMonthArr = daysInMonth(value.Obs)
+                datesArr = daysInMonth(value.Obs)
+                break;
+            }
+            case 'previosWeekData': {
+                datesArr = daysInWeek(value.Obs)
+                break;
             }
             default: break;
         }
@@ -102,9 +127,7 @@ const data = {
         state.data = {
             ...state.data,
             [key]:
-                datesArr?.Obs ? datesArr
-                    : daysInMonthArr?.Obs ? daysInMonthArr
-                        : value
+                datesArr?.Obs ? datesArr : value
         }
     },
 

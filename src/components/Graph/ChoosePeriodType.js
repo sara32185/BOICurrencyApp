@@ -48,6 +48,11 @@ const ChoosePeriodType = () => {
         id: 2,
         label: 'Year',
         key: 'yearData',
+    },
+    {
+        id: 3,
+        label: 'Week',
+        key: 'previosWeekData',
     },]
 
 

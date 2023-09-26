@@ -6,9 +6,10 @@ const DataHook = () => {
     const dispatch = useDispatch();
     const getData = (action) => dispatch(actions.getData(action))
     const data = useSelector(state => state.DataReducer)
+    const currentCurrency = useSelector(state => state.DataReducer.currency)
 
 
-    return { getData, data, };
+    return { getData, data, currentCurrency };
 }
 
 export default DataHook;
